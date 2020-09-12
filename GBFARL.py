@@ -1,13 +1,4 @@
-"""
-PuckWorld Environment for OpenAI gym
 
-The data used in this model comes from:
-http://cs.stanford.edu/people/karpathy/reinforcejs/puckworld.html
-
-
-Author: Qiang Ye
-Date: July 17, 2017
-"""
 
 import math
 import gym
@@ -21,7 +12,7 @@ from agent import ApproxQAgent
 from agent import SarsaAgent
 import matplotlib.pyplot as plt
 
-RAD2DEG = 57.29577951308232  # 弧度与角度换算关系1弧度=57.29..角度
+RAD2DEG = 57.29577951308232  
 
 
 class PuckWorldEnv(gym.Env):
@@ -31,20 +22,19 @@ class PuckWorldEnv(gym.Env):
     }
 
     def __init__(self, action_dist = []):
-        self.width = 600  # 场景宽度 screen width
-        self.height = 600  # 场景长度
-        self.l_unit = 1.0  # 场景长度单位 pysical world width
-        self.v_unit = 1.0  # 速度单位 velocity
+        self.width = 600  #  screen width
+        self.height = 600  
+        self.l_unit = 1.0  # pysical world width
+        self.v_unit = 1.0  # velocity
         self.max_speed = 0.025  # max agent velocity along a axis
 
-        self.re_pos_interval = 30  # 目标重置距离时间
-        self.accel = 0.002  # agent 加速度
-        self.rad = 0.05  # agent 半径,目标半径
+        self.re_pos_interval = 30  
+        self.accel = 0.002  
+        self.rad = 0.05  # agent 
         self.target_rad = 0.01  # target radius.
-        self.goal_dis = self.rad  # 目标接近距离 expected goal distance
+        self.goal_dis = self.rad  # expected goal distance
         self.t = 0  # puck world clock
         self.update_time = 100  # time for target randomize its position
-        # 作为观察空间每一个特征值的下限
         self.low = np.array([0,  # agent position x
                              0,
                              -self.max_speed,  # agent velocity
@@ -72,14 +62,12 @@ class PuckWorldEnv(gym.Env):
         self.epsilon = 0.7
         self.vals = []
         #self.action_space = np.random.normal(0.0, 1.0, size=None)
-        # 观察空间由low和high决定
         self.observation_space = spaces.Box(self.low, self.high)
 
         self._seed()  # 产生一个随机数种子
         self._reset()
 
     def _seed(self, seed=None):
-        # 产生一个随机化时需要的种子，同时返回一个np_random对象，支持后续的随机化生成操作
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
@@ -92,7 +80,7 @@ class PuckWorldEnv(gym.Env):
         normalized_prev_state = self.normalized_state(np.array(self.prev_state))
         self.action = self.pick_action(self.epsilon, self.action_dist,normalized_prev_state)
         action = self.action
-        ppx, ppy, pvx, pvy, tx, ty = self.state  # 获取agent位置，速度，目标位置
+        ppx, ppy, pvx, pvy, tx, ty = self.state 
         ppx, ppy = ppx + pvx, ppy + pvy  # update agent position
         pvx, pvy = pvx * 0.95, pvy * 0.95  # natural velocity loss
 
@@ -136,7 +124,7 @@ class PuckWorldEnv(gym.Env):
         #     "%r (%s) invalid" % (action, type(action))
 
         self.action = action  # action for rendering
-        ppx, ppy, pvx, pvy, tx, ty = self.state  # 获取agent位置，速度，目标位置
+        ppx, ppy, pvx, pvy, tx, ty = self.state  
         ppx, ppy = ppx + pvx, ppy + pvy  # update agent position
         pvx, pvy = pvx * 0.95, pvy * 0.95  # natural velocity loss
 
@@ -197,30 +185,14 @@ class PuckWorldEnv(gym.Env):
                 self.viewer = None
             return
 
-        scale = self.width / self.l_unit  # 计算两者映射关系
-        rad = self.rad * scale  # 随后都是用世界尺寸来描述
+        scale = self.width / self.l_unit 
+        rad = self.rad * scale  
         t_rad = self.target_rad * scale  # target radius
 
-        # 如果还没有设定屏幕对象，则初始化整个屏幕具备的元素。
         if self.viewer is None:
             from gym.envs.classic_control import rendering
             self.viewer = rendering.Viewer(self.width, self.height)
 
-            # 在Viewer里绘制一个几何图像的步骤如下：
-            # 1. 建立该对象需要的数据本身
-            # 2. 使用rendering提供的方法返回一个geom对象
-            # 3. 对geom对象进行一些对象颜色、线宽、线型、变换属性的设置（有些对象提供一些个
-            #    性化的方法
-            #    来设置属性，具体请参考继承自这些Geom的对象），这其中有一个重要的属性就是
-            #    变换属性，该属性负责对对象在屏幕中的位置、渲染、缩放进行渲染。如果某对象
-            #    在呈现时可能发生上述变化，则应建立关于该对象的变换属性。该属性是一个
-            #    Transform对象，而一个Transform对象，包括translate、rotate和scale
-            #    三个属性，每个属性都由以np.array对象描述的矩阵决定。
-            # 4. 将新建立的geom对象添加至viewer的绘制对象列表里，如果在屏幕上只出现一次，
-            #    将其加入到add_onegeom(）列表中，如果需要多次渲染，则将其加入add_geom()
-            # 5. 在渲染整个viewer之前，对有需要的geom的参数进行修改，修改主要基于该对象
-            #    的Transform对象
-            # 6. 调用Viewer的render()方法进行绘制
 
             target = rendering.make_circle(t_rad, 30, True)
             target.set_color(0.1, 0.9, 0.1)
@@ -259,12 +231,10 @@ class PuckWorldEnv(gym.Env):
             self.arrow.add_attr(self.line_trans)
             self.viewer.add_geom(self.arrow)
 
-        # 如果已经为屏幕准备好了要绘制的对象
-        # 本例中唯一要做的就是改变小车的位置和旋转
+    
         ppx, ppy, _, _, tx, ty = self.state
         self.target_trans.set_translation(tx * scale, ty * scale)
         self.agent_trans.set_translation(ppx * scale, ppy * scale)
-        # 按距离给Agent着色
         vv, ms = self.reward + 0.3, 1
         r, g, b, = 0, 1, 0
         if vv >= 0:
@@ -275,7 +245,6 @@ class PuckWorldEnv(gym.Env):
 
         a = self.action
         if a in [0, 1, 2, 3]:
-            # 根据action绘制箭头
             degree = 0
             if a == 0:
                 degree = 180
