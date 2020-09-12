@@ -1,9 +1,3 @@
-#!/home/qiang/PythonEnv/venv/bin/python3.5
-# -*- coding: utf-8 -*-
-# agents of reinforcment learning
-
-# Author: Qiang Ye
-# Date: July 27, 2017
 
 #from random import random, choice
 from numpy import random
@@ -21,7 +15,7 @@ class SarsaAgent(Agent):
     def __init__(self, env: Env, capacity: int = 20000):
         super(SarsaAgent, self).__init__(env, capacity)
         # Agent.__init__(self, env, cap)
-        # 保存一些Agent可以观测到的环境信息以及已经学到的经验
+ 
 
         # Discretize the continuous state space for each of the 6 features.
         num_discretization_bins = 9
@@ -46,7 +40,6 @@ class SarsaAgent(Agent):
         num_states = (self._max_bins + 1) ** len(self._state_bins)
         self.Q = np.zeros(shape=(num_states, self._num_actions))
 
-        #self.Q = {}  # {s0:[,,,,,,],s1:[,,,,,]} 数组内元素个数为行为空间大小
         #self.resetAgent()
         return
 
@@ -88,7 +81,6 @@ class SarsaAgent(Agent):
             # action = int(str_act)
         return action
 
-    # Agent依据当前策略和状态决定下一步的动作
     def performPolicy(self, s, num_episode, use_epsilon=True):
         return self._curPolicy(s, num_episode, use_epsilon)
 
@@ -122,7 +114,7 @@ class SarsaAgent(Agent):
                 #s1 = str(s1)
                 s1 = self._build_state(s1)
                 #self._assert_state_in_Q(str(s1), randomized=True)
-                # 在下行代码中添加参数use_epsilon = False即变城Q学习算法
+       
                 a1 = self.performPolicy(s1, step_in_episode, use_epsilon=True)
                 old_q = self._get_Q(s0, a0)
                 q_prime = self._get_Q(s1, a1)
@@ -163,9 +155,8 @@ class SarsaAgent(Agent):
         if not self._is_state_in_Q(s):
             self._init_state_value(s, randomized)
 
-    def _get_state_name(self, state):  # 得到状态对应的字符串作为以字典存储的价值函数
-        return str(state)  # 的键值，应针对不同的状态值单独设计，避免重复
-        # 这里仅针对格子世界
+    def _get_state_name(self, state):  
+        return str(state) 
 
     def _get_Q(self, s, a):
         #self._assert_state_in_Q(s, randomized=True)
@@ -180,8 +171,7 @@ class SarsaLambdaAgent(Agent):
     def __init__(self, env: Env, cap: 0):
         super(SarsaLambdaAgent, self).__init__(env, cap)
         # Agent.__init__(self, env, cap)
-        # 保存一些Agent可以观测到的环境信息以及已经学到的经验
-        self.Q = {}  # {s0:[,,,,,,],s1:[]} 数组内元素个数为行为空间大小
+        self.Q = {}  # {s0:[,,,,,,],s1:[]}
         self.E = {}  # Elegibility Trace
         self._init_agent()
         return
@@ -205,7 +195,6 @@ class SarsaLambdaAgent(Agent):
             action = int(str_act)
         return action
 
-    # Agent依据当前策略和状态决定下一步的动作
     def performPolicy(self, s, num_episode, use_epsilon=True):
         return self._curPolicy(s, num_episode, use_epsilon)
 
@@ -277,9 +266,8 @@ class SarsaLambdaAgent(Agent):
         if not self._is_state_in_Q(s):
             self._init_state_value(s, randomized)
 
-    def _get_state_name(self, state):  # 得到状态对应的字符串作为以字典存储的价值函数
-        return str(state)  # 的键值，应针对不同的状态值单独设计，
-        # 这里仅针对格子世界
+    def _get_state_name(self, state):  
+        return str(state) 
 
     def _get_(self, QorE, s, a):
         self._assert_state_in_QE(s, randomized=True)
@@ -296,8 +284,6 @@ class SarsaLambdaAgent(Agent):
 
 
 class ApproxQAgent(Agent):
-    '''使用近似的价值函数实现的Q学习个体
-    '''
 
     def __init__(self, env: Env = None,
                  trans_capacity=20000,
@@ -321,22 +307,20 @@ class ApproxQAgent(Agent):
         self.Q = Approximator(dim_input=self.input_dim,
                               dim_output=self.output_dim,
                               dim_hidden=self.hidden_dim)
-        self.PQ = self.Q.clone()  # 更新参数的网络
+        self.PQ = self.Q.clone()  
         return
 
     def _decayed_epsilon(self, cur_episode: int,
                          min_epsilon: float,
                          max_epsilon: float,
                          target_episode: int) -> float:
-        '''获得一个在一定范围内的epsilon
-        '''
+   
         slope = (min_epsilon - max_epsilon) / (target_episode)
         intercept = max_epsilon
         return max(min_epsilon, slope * cur_episode + intercept)
 
     def _curPolicy(self, s, epsilon=None):
-        '''依据更新策略的价值函数(网络)产生一个行为
-        '''
+   
         Q_s = self.PQ(s)
         rand_value = random()
         if epsilon is not None and rand_value < epsilon:
@@ -348,12 +332,11 @@ class ApproxQAgent(Agent):
         return self._curPolicy(s, epsilon)
 
     def _update_Q_net(self):
-        '''将更新策略的Q网络(连带其参数)复制给输出目标Q值的网络
-        '''
+  
         self.Q = self.PQ.clone()
 
     def _learn_from_memory(self, gamma, batch_size, learning_rate, epochs, r, s):
-        trans_pieces = self.sample(batch_size)  # 随机获取记忆里的Transmition
+        trans_pieces = self.sample(batch_size) 
         states_0 = np.vstack([x.s0 for x in trans_pieces])
         actions_0 = np.array([x.a0 for x in trans_pieces])
         reward_1 = np.array([x.reward for x in trans_pieces])
@@ -361,13 +344,10 @@ class ApproxQAgent(Agent):
         states_1 = np.vstack([x.s1 for x in trans_pieces])
 
         X_batch = states_0
-        y_batch = self.Q(states_0)  # 得到numpy格式的结果
-
-        # Q_target = r + gamma * np.max(self.Q(s), axis=1) * \
-        #            (~ is_done)  # is_done则Q_target==reward_1
+        y_batch = self.Q(states_0) 
 
         Q_target = reward_1 + gamma * np.max(self.Q(states_1), axis=1) * \
-                   (~ is_done)  # is_done则Q_target==reward_1
+                   (~ is_done) 
         y_batch[np.arange(len(X_batch)), actions_0] = Q_target
         # loss is a torch Variable with size of 1
         loss = self.PQ.fit(x=X_batch,
@@ -478,12 +458,10 @@ def testApproxQAgent():
     agent.learning(gamma=0.99,
                    learning_rate=1e-3,
                    batch_size=64,
-                   max_episodes=5000,  # 最大训练Episode数量
-                   min_epsilon=0.2,  # 最小Epsilon
-                   epsilon_factor=0.3,  # 开始使用最小Epsilon时Episode的序号占最大
-                   # Episodes序号之比，该比值越小，表示使用
-                   # min_epsilon的episode越多
-                   epochs=2  # 每个batch_size训练的次数
+                   max_episodes=5000, 
+                   min_epsilon=0.2, 
+                   epsilon_factor=0.3, 
+                   epochs=2
                    )
 
 
