@@ -64,7 +64,7 @@ class PuckWorldEnv(gym.Env):
         #self.action_space = np.random.normal(0.0, 1.0, size=None)
         self.observation_space = spaces.Box(self.low, self.high)
 
-        self._seed()  # 产生一个随机数种子
+        self._seed()
         self._reset()
 
     def _seed(self, seed=None):
@@ -358,7 +358,7 @@ if __name__ == "__main__":
 
     env = PuckWorldEnv(action_dist)
 
-    ##approxQagent
+    ##DQN AGENT
     # agent = ApproxQAgent(env,
     #                      trans_capacity=50000,
     #                      hidden_dim=32)
@@ -366,15 +366,15 @@ if __name__ == "__main__":
     # agent.learning(gamma=0.975,
     #                learning_rate=0.001,
     #                batch_size=64,
-    #                max_episodes=5,  # 最大训练Episode数量
-    #                min_epsilon=0.2,  # 最小Epsilon
-    #                epsilon_factor=0.7,  # 开始使用最小Epsilon时Episode的序号占最大
-    #                # Episodes序号之比，该比值越小，表示使用
-    #                # min_epsilon的episode越多
-    #                epochs=2  # 每个batch_size训练的次数
+    #                max_episodes=5, 
+    #                min_epsilon=0.2,  
+    #                epsilon_factor=0.7,  
+    #                # Episodes,
+    #                # min_epsilon,
+    #                epochs=2  
     #                )
 
-    ##sarsa learning
+    ##TILE-CODINGS
     # env._reset()
     # agent = SarsaAgent(env)
     # agent.learning(gamma=0.80,
@@ -387,12 +387,12 @@ if __name__ == "__main__":
     # print("nfs:%s; nfa:d" % (nfs))
     # print(env.observation_space)
     # print(env.action_space)
-    # env._reset()
-    #file = open('TD_Q_3.csv', 'w')
-    #file.write("Steps in Episode" + "," + "Distance from goal" + "\n")
+    env._reset()
+    file = open('TD_Q_3.csv', 'w')
+    file.write("Steps in Episode" + "," + "Distance from goal" + "\n")
 
-    file = open('TD_reward.csv', 'w')
-    file.write("Episode"+","+"reward"+"\n")
+#     file = open('GBNLFA.csv', 'w')
+#     file.write("Episode"+","+"reward"+"\n")
     done = False
     tot_reward = 0
     for i in range(5):
@@ -408,16 +408,5 @@ if __name__ == "__main__":
            print("Step in episode :: ",i)
            print("Distance from goal :: ", dis_info)
            file.write(str(i)+","+str(tot_reward)+"\n")
-    file.close()
-    #test
-    # file = open('test_TD.csv', 'w')
-    # file.write("Episode" + "," + "Distance from goal" + "\n")
-    # done = False
-    # while not done:
-    #    env._render()
-    #    state, prev_state, reward, action, dis_info, done = env._step()
-    #    print("Step in episode :: ",i)
-    #    print("Distance from goal :: ", dis_info)
-    #    file.write(str(i)+","+str(dis_info)+"\n")
-    # file.close()
-    # print("env closed")
+    file.close()   
+    print("env closed")
