@@ -91,7 +91,7 @@ class SarsaAgent(Agent):
         step_in_episode = 0
         num_episode = 1
 
-        file = open('sarsa_bf.csv', 'w')
+        file = open('tile-codings.csv', 'w')
         file.write("Episode"+","+"Distance"+"\n")
 
         tot_dis = 0
@@ -124,7 +124,6 @@ class SarsaAgent(Agent):
                 self._set_Q(s0, a0, new_q)
                 s0, a0 = s1, a1
                 print("Steps in episode ", step_in_episode)
-                print("reward ", tot_dis)
                 file.write(str(num_episode) + "," + str(tot_dis) + "\n")
 
 
@@ -370,8 +369,8 @@ class ApproxQAgent(Agent):
         total_steps, step_in_episode, num_episode = 0, 0, 0
         target_episode = max_episodes * epsilon_factor
 
-        # file = open('approxQ_5.csv', 'w')
-        # file.write("Episode"+","+"Distance"+"\n")
+        file = open('dqn.csv', 'w')
+        file.write("Episode"+","+"Distance"+"\n")
         tot_dis = 0
 
         file = open('reward.csv', 'w')
